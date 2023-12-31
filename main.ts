@@ -1,6 +1,9 @@
-import $ from "dax";
-import * as log from "log";
-import { Command, HelpCommand } from "cliffy";
+import $ from "https://deno.land/x/dax@0.36.0/mod.ts";
+import * as log from "https://deno.land/std@0.210.0/log/mod.ts";
+import {
+  Command,
+  HelpCommand,
+} from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
 
 type Options = {
   debug?: boolean | undefined;
@@ -8,7 +11,7 @@ type Options = {
   name?: string | undefined;
 };
 
-enum BitWardenItemType {
+enum BitwardenItemType {
   Login = 1,
   SecureNote = 2,
   Card = 3,
@@ -16,10 +19,10 @@ enum BitWardenItemType {
 }
 
 new Command()
-  .name("BitWarden Environment")
-  .version("0.1.0")
+  .name("Bitwarden Environment")
+  .version("0.1.1")
   .description(
-    "Securely sets environment variables from items in a BitWarden folder and executes commands.",
+    "Securely sets environment variables from items in a Bitwarden folder and executes commands.",
   )
   .globalOption("-d, --debug", "Enable debug output", { default: false })
   .globalAction((option) => setUp(option))
@@ -28,14 +31,14 @@ new Command()
   .command("run <command:string>", "Run Command")
   .option(
     "-f, --folder-id <folderId:string>",
-    "BitWarden Folder Id (Default: `BW_FOLDER_ID` environment)",
+    "Bitwarden Folder Id (Default: `BW_FOLDER_ID` environment)",
     {
       default: Deno.env.get("BW_FOLDER_ID"),
     },
   )
   .option(
     "-n, --name <name:string>",
-    "BitWarden Item Name (Item type is SecureNote only)",
+    "Bitwarden Item Name (Item type is SecureNote only)",
     {
       default: undefined,
     },
@@ -71,7 +74,7 @@ const run = async (option: Options, command: string) => {
   const items = await $`bw list items --folderid ${option.folderId}`.json();
   for (const item of items) {
     // only SecureNote
-    if (item.type !== BitWardenItemType.SecureNote) {
+    if (item.type !== BitwardenItemType.SecureNote) {
       logger.debug(`item type is not SecureNote, item name: ${item.name}`);
       continue;
     }
